@@ -7,7 +7,7 @@ on:
       - master
       
   schedule:
-  - cron: "* * * * 1,5" # See https://crontab.guru/
+  - cron: "1 * * * 1,5" # See https://crontab.guru/
 
 jobs:
   auto_commit:
@@ -20,12 +20,12 @@ jobs:
 
       - name: Modify last update
         run: |
-          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+          d=`date '+%A, %d %B %Y - %T %z'`
           echo $d > LAST_UPDATED
           
       - name: Commit changes
         run: |
-          git config --local user.email "dreddine@yandex.com"
+          git config --local user.email "${{ secrets.EMAIL }}"
           git config --local user.name "DredGit"
           git add -A
           
@@ -45,7 +45,8 @@ jobs:
           git commit -m "${arr[$rand]}"
           
       - name: GitHub Push
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@master
         with:
-          directory: "."
+          force-with-lease: true
+          directory: '.'
           github_token: ${{ secrets.GITHUB_TOKEN }}
